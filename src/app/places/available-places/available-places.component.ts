@@ -10,21 +10,22 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   templateUrl: './available-places.component.html',
   styleUrl: './available-places.component.css',
-  imports: [PlacesComponent, PlacesContainerComponent],
+  imports: [PlacesComponent, PlacesContainerComponent]
+  
 })
 export class AvailablePlacesComponent implements OnInit{
   places = signal<Place[] | undefined>(undefined);
-  private httpRequest= inject(HttpClient);
+  private httpClient= inject(HttpClient);
   private destroyRef=inject(DestroyRef);
 
-ngOnInit(){
-  const subscription=this.httpRequest.get('http/localhost:3000/places').subscribe({
-    next:(resdata) => {
-      console.log(resdata);
-    }
-  })
-  this.destroyRef.onDestroy(() => {
-    subscription.unsubscribe();
-  })
+  ngOnInit(): void {
+      const subscription=this.httpClient.get<{places:Place[]}>('http://localhost:35797/places').subscribe({
+        next:(resData) => {
+          console.log(resData.places);
+        }
+      })
+      this.destroyRef.onDestroy(() => {
+        subscription.unsubscribe();
+      })
   }
 }
