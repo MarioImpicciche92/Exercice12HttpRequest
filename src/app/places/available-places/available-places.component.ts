@@ -1,10 +1,10 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-
+import { catchError, map, throwError } from 'rxjs';
+import { PlacesService } from '../places.service';
 import { Place } from '../place.model';
 import { PlacesComponent } from '../places.component';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
-import { HttpClient } from '@angular/common/http';
-import { catchError, map, throwError } from 'rxjs';
+
 
 @Component({
   selector: 'app-available-places',
@@ -15,21 +15,16 @@ import { catchError, map, throwError } from 'rxjs';
   
 })
 export class AvailablePlacesComponent implements OnInit{
+  
   places = signal<Place[] | undefined>(undefined);
   isFetching=signal(false);
   error=signal('');
   
-  private httpClient= inject(HttpClient);
+  private placesService = inject(PlacesService);
   private destroyRef=inject(DestroyRef);
 
   ngOnInit(): void {
-      const subscription=this.httpClient.get<{places:Place[]}>
-      ('http://localhost:3000/places')
-      .pipe(map((resData) => resData.places),
-      catchError((error) => throwError(() => {
-        new Error()
-      }))
-    ).subscribe({
+      const subscription=this.placesService.loadAvailablePlaces().subscribe({
         next:(places) => {
           this.places.set(places)
           console.log(places);
@@ -48,14 +43,15 @@ export class AvailablePlacesComponent implements OnInit{
         subscription.unsubscribe();
       })
   }
-
+//error to see tomorrow
   onSelectPlace(selectedPlace: Place){
-    this.httpClient.put('http://localhost:3000/user-places',{
-      placeId : selectedPlace.id
-}).subscribe({
+   const PushSubscription = this.placesService.addPlaceToUserPlaces(selectedPlace.id).subscribe({
   next:(resData) => console.log(resData)
 });
   }
+  this.destroyRef.onDestroy(()=>{
+    PushSubscription.unsubscribe();
+  })
 }
 function resData(value: { places: Place[]; }, index: number): unknown {
   throw new Error('Function not implemented.');
