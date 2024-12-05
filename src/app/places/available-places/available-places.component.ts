@@ -43,15 +43,13 @@ export class AvailablePlacesComponent implements OnInit{
         subscription.unsubscribe();
       })
   }
-//error to see tomorrow
+
   onSelectPlace(selectedPlace: Place){
-   const PushSubscription = this.placesService.addPlaceToUserPlaces(selectedPlace.id).subscribe({
+   this.placesService.addPlaceToUserPlaces(selectedPlace.id).subscribe({
   next:(resData) => console.log(resData)
 });
   }
-  this.destroyRef.onDestroy(()=>{
-    PushSubscription.unsubscribe();
-  })
+  
 }
 function resData(value: { places: Place[]; }, index: number): unknown {
   throw new Error('Function not implemented.');

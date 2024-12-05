@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
 import { PlacesComponent } from '../places.component';
 import { Place } from '../place.model';
+import { PlacesService } from '../places.service';
 
 
 @Component({
@@ -18,13 +19,12 @@ export class UserPlacesComponent implements OnInit {
    places = signal<Place[] | undefined>(undefined);
   isFetching=signal(false);
   private httpClient= inject(HttpClient);
+  private placeService = inject(PlacesService);
    private destroyRef=inject(DestroyRef);
 
   
  ngOnInit(): void {
-      const subscription=this.httpClient.get<{places:Place[]}>
-      ('http://localhost:3000/user-places')
-      .pipe(map((resData) => resData.places)).subscribe({
+      const subscription=this.placeService.loadUserPlaces().subscribe({
         next:(places) => {
           this.places.set(places)
           console.log(places);
