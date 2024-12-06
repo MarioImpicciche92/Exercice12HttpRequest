@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 
 import { Place } from './place.model';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, throwError } from 'rxjs';
+import { catchError, map, Observable, Subject, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +35,7 @@ export class PlacesService {
 
   removeUserPlace(place: Place) {}
 
-  private fetchPlace(url:string,erroMessage:string){
+  private fetchPlace(url:string,erroMessage:string): Observable<Place[]> {
     return this.httpClient.get<{places:Place[]}>
       (url)
       .pipe(map((resData) => resData.places),
