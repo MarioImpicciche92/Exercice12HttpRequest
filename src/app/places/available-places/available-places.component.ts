@@ -4,6 +4,7 @@ import { PlacesService } from '../places.service';
 import { Place } from '../place.model';
 import { PlacesComponent } from '../places.component';
 import { PlacesContainerComponent } from '../places-container/places-container.component';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -22,11 +23,13 @@ export class AvailablePlacesComponent implements OnInit{
   
   private placesService = inject(PlacesService);
   private destroyRef=inject(DestroyRef);
+  private httpClient=inject(HttpClient);
 
   ngOnInit(): void {
-      const subscription=this.placesService.loadAvailablePlaces().subscribe({
+      const subscription=this.httpClient.get<{places:Place[]}>
+      ('http://localhost:3000/places').subscribe({
         next:(places) => {
-          this.places.set(places)
+          this.places.set(places.places)
           console.log(places);
         },
         error: (error) =>

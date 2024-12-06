@@ -14,7 +14,7 @@ export class PlacesService {
   private httpClient=inject(HttpClient);
 
   loadAvailablePlaces() {
-    return this.fetchPlace(
+     return this.fetchPlace(
       'http://localhost:3000/places',
       'Something went wrong fetching the avaibles places.Please try again later.'
     )
@@ -22,13 +22,13 @@ export class PlacesService {
 
   loadUserPlaces() {
     return this.fetchPlace(
-      'http://localhost:3000/places',
+      'http://localhost:3000/user-places',
       'Something went wrong fetching your favorite places.Please try again later.'
     )
   }
 
   addPlaceToUserPlaces(placeId:string) {
-    return this.httpClient.put('http://localhost:3001/user-places',{
+    return this.httpClient.put('http://localhost:3000/user-places',{
       placeId
 })
   }
