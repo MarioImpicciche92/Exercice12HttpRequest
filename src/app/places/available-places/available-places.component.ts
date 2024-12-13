@@ -43,16 +43,18 @@ export class AvailablePlacesComponent implements OnInit{
       
       this.destroyRef.onDestroy(()=>{
         subscription.unsubscribe();
-      })
+      });
   }
 
   onSelectPlace(selectedPlace: Place){
-   this.placesService.addPlaceToUserPlaces(selectedPlace.id).subscribe({
-  next:(resData) => console.log(resData)
-});
-  }
-  
+    const subscription = this.placesService.addPlaceToUserPlaces(selectedPlace).subscribe({
+    next:(resData) => console.log(resData)
+    });
+    this.destroyRef.onDestroy(() =>{
+      subscription.unsubscribe();
+    })
 }
+  }
 function resData(value: { places: Place[]; }, index: number): unknown {
   throw new Error('Function not implemented.');
 }
